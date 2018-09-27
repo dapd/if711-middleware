@@ -29,7 +29,7 @@ public class TxtRepoImpl extends UnicastRemoteObject implements ITxtRepo {
 	public byte[] request(String filename) throws RemoteException, IOException {
 		byte data[] = new byte[1024];
 		// Criando classe do arquivo a ser enviado
-		File file = new File("repository/" + filename);
+		File file = new File("acervo/" + filename);
 
 		// Enviando arquivo
 		FileInputStream fileStream = new FileInputStream(file);
