@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import message.Message;
+import naming.NamingRecord;
 
 public class Marshaller {
 	public byte [] marshall(Message msgToBeMarshalled) throws IOException, InterruptedException{
@@ -33,10 +34,17 @@ public class Marshaller {
 		return byteStream.toByteArray();
 	}
 	
-	public Object unmarshallClient(byte [] msgToBeUnmarshalled) throws IOException, InterruptedException, ClassNotFoundException{
+	public ClientProxy unmarshallClient(byte [] msgToBeUnmarshalled) throws IOException, InterruptedException, ClassNotFoundException{
 		ByteArrayInputStream byteStream = new ByteArrayInputStream(msgToBeUnmarshalled);
 		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
 				
-		return objectStream.readObject();
+		return (ClientProxy) objectStream.readObject();
+	}
+	
+	public NamingRecord unmarshallRecord(byte [] msgToBeUnmarshalled) throws IOException, InterruptedException, ClassNotFoundException{
+		ByteArrayInputStream byteStream = new ByteArrayInputStream(msgToBeUnmarshalled);
+		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+				
+		return (NamingRecord) objectStream.readObject();
 	}
 }

@@ -4,13 +4,14 @@
 package naming;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Random;
 
 import proxy.ClientProxy;
+import proxy.Marshaller;
 
 /**
  * @author fabio
@@ -22,6 +23,7 @@ public class NamingProxy implements INaming {
 	private NamingServer namingServer = null;
 	private Socket receiveSocket;
 	private ObjectOutputStream chosenFile;
+	private Marshaller marshaller = new Marshaller();
 
 	/**
 	 * @param host
@@ -42,7 +44,8 @@ public class NamingProxy implements INaming {
 	public void bind(String serviceName, ClientProxy clientProxy) {
 		if (namingServer == null) {
 			namingServer = new NamingServer(host, port);
-			namingServer.run();
+			Thread namingService = new Thread(namingServer);
+			namingService.start();
 		}
 		clientProxy.setHost(host);
 		clientProxy.setPort(1234);
@@ -55,8 +58,11 @@ public class NamingProxy implements INaming {
 		try {
 			receiveSocket = new Socket(host, port);
 			chosenFile = new ObjectOutputStream(receiveSocket.getOutputStream());
-			chosenFile.writeObject(record);
+			chosenFile.writeObject(marshaller.marshall(record));
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -79,12 +85,16 @@ public class NamingProxy implements INaming {
 	private Object receive() {
 		Object response = null;
 		try {
-			response = new ObjectInputStream(receiveSocket.getInputStream()).readObject();
+			byte[] allBytes = receiveSocket.getInputStream().readAllBytes();
+			response = marshaller.unmarshallClient(allBytes);
 			receiveSocket.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

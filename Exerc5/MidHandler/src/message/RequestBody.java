@@ -9,25 +9,25 @@ public class RequestBody implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -4838014538014350925L;
-	private ArrayList<Object> parameters = new ArrayList<Object>();
+	private ArrayList<String> parameters = new ArrayList<String>();
 	
 	/**
-	 * @param parameters
+	 * @param list
 	 */
-	public RequestBody(List<Object> parameters) {
+	public RequestBody(List<String> list) {
 		super();
-		this.parameters = (ArrayList<Object>) parameters;
+		this.parameters = (ArrayList<String>) list;
 	}
 	/**
 	 * @return the parameters
 	 */
-	public ArrayList<Object> getParameters() {
+	public ArrayList<String> getParameters() {
 		return parameters;
 	}
 	/**
 	 * @param parameters the parameters to set
 	 */
-	public void setParameters(ArrayList<Object> parameters) {
+	public void setParameters(ArrayList<String> parameters) {
 		this.parameters = parameters;
 	}
 	
