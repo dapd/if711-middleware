@@ -1,11 +1,8 @@
 package server;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-
-import handlers.ServerRequestHandler;
+import invoker.TxtRepoInvoker;
+import middleware.TxtProxy;
+import naming.NamingProxy;
 
 /**
  * 
@@ -17,8 +14,6 @@ import handlers.ServerRequestHandler;
  */
 public class Server {
 
-	private static final String PROTOCOL = "rmi";
-
 	/**
 	 * 
 	 */
@@ -28,36 +23,13 @@ public class Server {
 
 	/**
 	 * @param args
-	 * @throws RemoteException 
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) throws RemoteException {
-		if ("rmi".equals(PROTOCOL)) {
-			LocateRegistry.createRegistry(6969);
-		}
-		try {
-			ServerRequestHandler handler = new ServerRequestHandler(1234);
-			while (true) {
-				byte[] fileNameSerialized = handler.receive(PROTOCOL);
-				String fileName = (new String(fileNameSerialized)).trim();
-				if (!"rmi".equals(fileName)) {
-					FileInputStream fileStream = new FileInputStream(new File(getFilePath(fileName).toString()));
-					handler.send(fileStream.readAllBytes(), PROTOCOL);
-					fileStream.close();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static void main(String[] args) throws Exception {
+		TxtRepoInvoker invoker = new TxtRepoInvoker();
+		TxtProxy proxy = new TxtProxy();
+		NamingProxy namingProxy = new NamingProxy("localhost", 6969);
+		namingProxy.bind("TxtRepo", proxy);
+		invoker.invoker(proxy);				
 	}
-
-	private static StringBuilder getFilePath(String fileName) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(System.getProperty("user.dir"));
-		stringBuilder.append(File.separator);
-		stringBuilder.append("acervo");
-		stringBuilder.append(File.separator);
-		stringBuilder.append(fileName);
-		return stringBuilder;
-	}
-
 }

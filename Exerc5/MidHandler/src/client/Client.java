@@ -13,6 +13,8 @@ import java.rmi.UnknownHostException;
 import java.util.Random;
 
 import handlers.ClientRequestHandler;
+import middleware.TxtProxy;
+import naming.NamingProxy;
 
 /**
  * 
@@ -43,13 +45,12 @@ public class Client {
 		byte[] response;
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter("tempos.txt"));
-			ClientRequestHandler handler = new ClientRequestHandler("localhost", 1234);
+			TxtProxy repository = (TxtProxy) new NamingProxy("localhost", 6969).lookup("TxtRepo");
 			for (int i = 0; i < it; i++) {
 				filename = getFileName();
 				System.out.println("File Requested: " + filename);
 				ini = System.nanoTime();   // <------- início contagem tempo
-				handler.send(filename.getBytes(), PROTOCOL);
-				response = handler.receive(PROTOCOL);
+				response = repository.request(filename);
 				fim = System.nanoTime();   // <------- fim contagem tempo
 				saveDownloadedFile(filename, response);
 				System.out.printf("File %s Received!\n", filename);

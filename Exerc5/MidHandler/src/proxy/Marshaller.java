@@ -24,4 +24,19 @@ public class Marshaller {
 				
 		return (Message) objectStream.readObject();
 	}
+	
+	public byte [] marshall(Object msgToBeMarshalled) throws IOException, InterruptedException{
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
+		objectStream.writeObject(msgToBeMarshalled);
+		
+		return byteStream.toByteArray();
+	}
+	
+	public Object unmarshallClient(byte [] msgToBeUnmarshalled) throws IOException, InterruptedException, ClassNotFoundException{
+		ByteArrayInputStream byteStream = new ByteArrayInputStream(msgToBeUnmarshalled);
+		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+				
+		return objectStream.readObject();
+	}
 }

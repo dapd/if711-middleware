@@ -120,8 +120,4 @@ public class ClientRequestHandler {
 		}
 	}
 	
-	public void sendMsg (Message msg) throws IOException,InterruptedException{}
-	public Message receive() throws IOException, InterruptedException{
-		return null;}
-	
 }
