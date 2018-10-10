@@ -5,7 +5,6 @@ package handlers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -16,7 +15,6 @@ import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import message.Message;
 import middleware.ITxtRepo;
 
 /**
@@ -45,7 +43,6 @@ public class ClientRequestHandler {
 	 * */
 	Socket receiveSocket;
 	private ObjectOutputStream chosenFile;
-	private ObjectInputStream inFromServer;
 	private InputStream fileIn;
 	
 	/*

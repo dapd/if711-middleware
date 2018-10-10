@@ -1,7 +1,6 @@
 package proxy;
 
 import java.io.Serializable;
-import java.rmi.UnknownHostException;
 
 public class ClientProxy implements Serializable {
 	private static final long serialVersionUID = 1L;

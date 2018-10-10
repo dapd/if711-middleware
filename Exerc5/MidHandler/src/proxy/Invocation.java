@@ -14,7 +14,7 @@ public class Invocation {
 	private Integer port;
 	private Integer objectId;
 	private String operationName;
-	private List<String> parameters;
+	private List<Object> parameters;
 
 	/**
 	 * @param host
@@ -87,14 +87,14 @@ public class Invocation {
 	/**
 	 * @return the parameters
 	 */
-	public List<String> getParameters() {
+	public List<Object> getParameters() {
 		return parameters;
 	}
 
 	/**
 	 * @param parameters the parameters to set
 	 */
-	public void setParameters(List<String> parameters) {
+	public void setParameters(List<Object> parameters) {
 		this.parameters = parameters;
 	}
 

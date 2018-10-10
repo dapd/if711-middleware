@@ -34,11 +34,11 @@ public class Marshaller {
 		return byteStream.toByteArray();
 	}
 	
-	public ClientProxy unmarshallClient(byte [] msgToBeUnmarshalled) throws IOException, InterruptedException, ClassNotFoundException{
+	public Object unmarshallGeneric(byte [] msgToBeUnmarshalled) throws IOException, InterruptedException, ClassNotFoundException{
 		ByteArrayInputStream byteStream = new ByteArrayInputStream(msgToBeUnmarshalled);
 		ObjectInputStream objectStream = new ObjectInputStream(byteStream);
 				
-		return (ClientProxy) objectStream.readObject();
+		return (Object) objectStream.readObject();
 	}
 	
 	public NamingRecord unmarshallRecord(byte [] msgToBeUnmarshalled) throws IOException, InterruptedException, ClassNotFoundException{

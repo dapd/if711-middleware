@@ -12,7 +12,6 @@ import java.rmi.UnknownHostException;
 //import java.rmi.registry.Registry;
 import java.util.Random;
 
-import handlers.ClientRequestHandler;
 import middleware.TxtProxy;
 import naming.NamingProxy;
 
@@ -26,7 +25,6 @@ import naming.NamingProxy;
  */
 public class Client {
 
-	private static final String PROTOCOL = "tcp";
 	private static final int it = 1000;
 	private static final String downloadPath = System.getProperty("user.dir") + File.separator + "download"
 			+ File.separator;

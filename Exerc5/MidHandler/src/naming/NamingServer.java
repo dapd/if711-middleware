@@ -5,11 +5,9 @@ package naming;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.OutputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import proxy.Marshaller;
 
 /**
  * @author fabio
@@ -17,7 +15,6 @@ import proxy.Marshaller;
  */
 public class NamingServer implements Runnable {
 
-	private String host;
 	private Integer port;
 
 	private ServerSocket serverSocketTcp;
@@ -25,7 +22,6 @@ public class NamingServer implements Runnable {
 
 	private NamingRepository namingRepository = new NamingRepository();
 
-	private Marshaller marshaller = new Marshaller();
 
 	/**
 	 * @param host
@@ -33,7 +29,6 @@ public class NamingServer implements Runnable {
 	 */
 	public NamingServer(String host, Integer port) {
 		super();
-		this.host = host;
 		this.port = port;
 	}
 
@@ -44,7 +39,7 @@ public class NamingServer implements Runnable {
 				serverSocketTcp = new ServerSocket(port);
 				sendSocket = serverSocketTcp.accept();
 				ObjectInputStream chosenFile = new ObjectInputStream(sendSocket.getInputStream());
-				NamingRecord entry = (NamingRecord) marshaller.unmarshallRecord((byte[])chosenFile.readObject());
+				NamingRecord entry = (NamingRecord) chosenFile.readObject();
 				switch (entry.getOperation()) {
 				case "bind":
 					namingRepository.addService(entry.getServiceName(), entry.getClientProxy());
@@ -77,8 +72,8 @@ public class NamingServer implements Runnable {
 	}
 
 	private void send(Object clientProxy) throws IOException, InterruptedException {
-		OutputStream out = sendSocket.getOutputStream();
-		out.write(marshaller.marshall(clientProxy));
+		ObjectOutputStream out = new ObjectOutputStream(sendSocket.getOutputStream());
+		out.writeObject(clientProxy);
 		out.close();
 	}
 

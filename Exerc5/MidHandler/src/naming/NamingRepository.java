@@ -4,6 +4,9 @@
 package naming;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -47,8 +50,13 @@ public class NamingRepository {
 		return services.remove(serviceName);
 	}
 	
-	public ArrayList<ClientProxy> list() {
-		return (ArrayList<ClientProxy>) services.values();
+	public List<String> list() {
+		Set<String> keySet = services.keySet();
+		List<String> svc = new ArrayList<>();
+		for (String string : keySet) {
+			svc.add(string);
+		}
+		return svc;
 	}
 	
 }
