@@ -5,6 +5,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import proxy.ClientProxy;
 import proxy.Invocation;
@@ -29,14 +30,19 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 	 */
 	
 	private static final long serialVersionUID = 5963528753775146077L;
-	
-	public byte[] request(String bankMethod) throws RemoteException, IOException {
+
+	/*abertura de conta, login, transferencia, consulta de saldo, pagamento de boleto, ver fatura*/
+	public byte[] createAccout(UUID uniqueId, String pswd, int accountNumber, int bankBranchNumber) throws RemoteException, IOException{ //retorna mensagem de confirmação
 		List<String> parameters = new ArrayList<>();
-		parameters.add(bankMethod);
+		parameters.add(uniqueId.toString());
+		parameters.add(pswd);
+		parameters.add(String.valueOf(accountNumber));
+		parameters.add(String.valueOf(bankBranchNumber));
 		Requestor requestor = new Requestor();
 		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
-		invok.setOperationName("request");
+		invok.setOperationName("createAccount");
 		invok.setParameters(parameters);
+		
 		byte[] response = null;
 		try {
 			response = requestor.invoke(invok);
@@ -50,34 +56,114 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 		return response;
 	}
 	
-	/*abertura de conta, login, transferencia, consulta de saldo, pagamento de boleto, ver fatura*/
-	public String createAccout(String emailAddress, String pswd) throws Throwable{ //retorna mensagem de confirmação
-		String msg = null;
-		return msg;
+	public byte[] login(UUID uniqueId, String pswd) throws RemoteException, IOException{ //retorna mensagem de confirmação
+		List<String> parameters = new ArrayList<>();
+		parameters.add(uniqueId.toString());
+		parameters.add(pswd);
+		Requestor requestor = new Requestor();
+		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
+		invok.setOperationName("login");
+		invok.setParameters(parameters);
+		
+		byte[] response = null;
+		try {
+			response = requestor.invoke(invok);
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return response;
 	}
 	
-	public String login(String emailAddress, String pswd) throws Throwable{ //retorna mensagem de confirmação
-		String msg = null;
-		return msg;
+	public byte[] moneyTransfer(int bankBranchNumber, int accountNumber, String bankName, float amountToTransfer, UUID uniqueId) throws RemoteException, IOException{ //retorna mensagem de confirmação ou erro
+		List<String> parameters = new ArrayList<>();
+		parameters.add(uniqueId.toString());
+		parameters.add(String.valueOf(accountNumber));
+		parameters.add(String.valueOf(bankBranchNumber));
+		parameters.add(String.valueOf(bankName));
+		parameters.add(String.valueOf(String.valueOf(amountToTransfer)));
+		Requestor requestor = new Requestor();
+		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
+		invok.setOperationName("moneyTransfer");
+		invok.setParameters(parameters);
+		
+		byte[] response = null;
+		try {
+			response = requestor.invoke(invok);
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return response;
 	}
 	
-	public String moneyTransfer(int bankBranchNumber, int accountNumber, String bankName, float value, String emailAddress) throws Throwable{ //retorna mensagem de confirmação ou erro
-		String msg = null;
-		return msg;
+	public byte[] accountBalance(UUID uniqueId) throws RemoteException, IOException{ 
+		List<String> parameters = new ArrayList<>();
+		parameters.add(uniqueId.toString());
+		Requestor requestor = new Requestor();
+		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
+		invok.setOperationName("accountBalance");
+		invok.setParameters(parameters);
+		
+		byte[] response = null;
+		try {
+			response = requestor.invoke(invok);
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return response;
 	}
 	
-	public float accountBalance(String emailAddress) throws Throwable{ //retorna o valor
-		float msg = 0;
-		return msg;
+	public byte[] payment (UUID uniqueId, String billNumber) throws RemoteException, IOException{ //retorna mensagem de confirmação ou erro
+		List<String> parameters = new ArrayList<>();
+		parameters.add(uniqueId.toString());
+		parameters.add(billNumber);
+		Requestor requestor = new Requestor();
+		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
+		invok.setOperationName("payment");
+		invok.setParameters(parameters);
+		
+		byte[] response = null;
+		try {
+			response = requestor.invoke(invok);
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return response;
 	}
 	
-	public String payment (String emailAddress, String billNumber) throws Throwable{ //retorna mensagem de confirmação ou erro
-		String msg = null;
-		return msg;
-	}
-	
-	public float creditCardBill(String emailAddress) throws Throwable{ //retorna total da fatura até a consulta
-		float msg = 0;
-		return msg;
+	public byte[] creditCardBill(UUID uniqueId) throws RemoteException, IOException{ //retorna total da fatura até a consulta
+		List<String> parameters = new ArrayList<>();
+		parameters.add(uniqueId.toString());
+		Requestor requestor = new Requestor();
+		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
+		invok.setOperationName("creditCardBill");
+		invok.setParameters(parameters);
+		
+		byte[] response = null;
+		try {
+			response = requestor.invoke(invok);
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return response;
 	}
 }
