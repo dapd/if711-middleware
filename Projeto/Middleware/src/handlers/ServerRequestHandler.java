@@ -6,24 +6,14 @@ package handlers;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.rmi.NotBoundException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import middleware.IMidBank;
-import middleware.MidBankImpl;
 
 /**
  * @author fabio
  *
  */
 public class ServerRequestHandler {
-	private static final int BUF_SIZE = 1024;
-	private static final String END = String.valueOf('\0');
 	private Integer port;
 
 	/**
@@ -35,20 +25,25 @@ public class ServerRequestHandler {
 		this.port = port;
 	}
 
-	private Registry registry;
-	private IMidBank repo;
+	private ServerSocket serverSocketTcp;
+	private Socket sendSocket;
 
 	public byte[] receive() throws IOException, ClassNotFoundException {
 		byte[] nomeArquivo = null;
-		registry = LocateRegistry.getRegistry(6969);
-		repo = new MidBankImpl();
-		registry.rebind("txtRepo", repo);
-		nomeArquivo = "rmi".getBytes();
+		// Inicializando servidor
+		serverSocketTcp = new ServerSocket(port);
+		sendSocket = serverSocketTcp.accept();
+		// Recebendo informacoes do arquivo solicitado
+		ObjectInputStream chosenFile = new ObjectInputStream(sendSocket.getInputStream());
+		nomeArquivo = (byte[]) chosenFile.readObject();
 		return nomeArquivo;
 	}
-	
-	public void send(byte[] msg) throws IOException, NotBoundException {
-		//metodo request do TxtRepoImpl ja trata o envio
-		
+
+	public void send(byte[] msg) throws IOException {
+		OutputStream out = sendSocket.getOutputStream();
+		out.write(msg, 0, msg.length);
+		out.close();
+		sendSocket.close();
+		serverSocketTcp.close();
 	}
 }

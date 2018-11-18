@@ -13,18 +13,50 @@ import message.RequestBody;
 import message.RequestHeader;
 
 public class Requestor {
-	public byte[] invoke(Invocation invok) throws UnknownHostException, IOException, NotBoundException, InterruptedException {
+	private static final long TIMEOUT = 30000l;
+	private static final Random RANDOM = new Random(System.currentTimeMillis());
+
+	public byte[] invoke(Invocation invok)
+			throws UnknownHostException, NotBoundException, InterruptedException {
 		ClientRequestHandler crh = new ClientRequestHandler(invok.getHost(), invok.getPort());
 		Marshaller marshaller = new Marshaller();
+		Boolean communicationSuccess = Boolean.TRUE;
+		
 		Message request = new Message(
 				new MessageHeader("ftp", 0, Boolean.FALSE, 0,
 						invok.getOperationName().length() + invok.getParameters().size()),
-				new MessageBody(
-						new RequestHeader("", new Random(System.currentTimeMillis()).nextInt(), Boolean.TRUE,
-								invok.getObjectId(), invok.getOperationName()),
-						new RequestBody(invok.getParameters()), null, null));
-		crh.send(marshaller.marshall(request));
-		return crh.receive();
+				new MessageBody(new RequestHeader("", RANDOM.nextInt(), Boolean.TRUE, invok.getObjectId(),
+						invok.getOperationName()), new RequestBody(invok.getParameters()), null, null));
+		
+		try {
+			crh.send(marshaller.marshall(request));
+			communicationSuccess = Boolean.TRUE;
+		} catch (IOException e) {
+			e.printStackTrace();
+			communicationSuccess = Boolean.FALSE;
+		}
+		
+		Long inicialTime = System.currentTimeMillis();
+		Long finalTime = 0l;
+		byte[] bs = null;
+		
+		if (communicationSuccess) {
+			do{
+				try {
+					bs = crh.receive();
+					communicationSuccess = Boolean.TRUE;
+				} catch (IOException e) {
+					e.printStackTrace();
+					communicationSuccess = Boolean.FALSE;
+					finalTime = System.currentTimeMillis();
+				}
 
+				if (!communicationSuccess && finalTime - inicialTime > TIMEOUT) {
+					break;
+				}
+			} 
+			while (!communicationSuccess); 
+		}
+		return bs;
 	}
 }
