@@ -1,0 +1,29 @@
+/**
+ * 
+ */
+package middleware;
+
+/**
+ * @author fabio
+ *
+ */
+public enum Operation {
+	ACCOUNT_CREATION("CRIACAO DE CONTA"), BALANCE("VERIFICACAO DE SALDO"), PAYMENT("REALIZACAO DE PAGAMENTO"), TRANSFER("TRANSFERENCIA DE VALORES");
+
+	private String valor;
+
+	/**
+	 * @return the valor
+	 */
+	public String getValor() {
+		return valor;
+	}
+
+	/**
+	 * @param valor
+	 */
+	private Operation(String valor) {
+		this.valor = valor;
+	}
+
+}

@@ -78,11 +78,11 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 		return response;
 	}
 	
-	public byte[] moneyTransfer(int bankBranchNumber, int accountNumber, String bankName, float amountToTransfer, UUID uniqueId) throws RemoteException, IOException{ //retorna mensagem de confirmação ou erro
+	public byte[] moneyTransfer(UUID uniqueId, Integer debitAccountNumber, Integer debitBankBranchNumber, Integer creditAccountNumber, Integer creditBankBranchNumber, String bankName, Double amountToTransfer) throws RemoteException, IOException{ //retorna mensagem de confirmação ou erro
 		List<String> parameters = new ArrayList<>();
 		parameters.add(uniqueId.toString());
-		parameters.add(String.valueOf(accountNumber));
-		parameters.add(String.valueOf(bankBranchNumber));
+		parameters.add(String.valueOf(creditAccountNumber));
+		parameters.add(String.valueOf(creditBankBranchNumber));
 		parameters.add(String.valueOf(bankName));
 		parameters.add(String.valueOf(String.valueOf(amountToTransfer)));
 		Requestor requestor = new Requestor();
@@ -103,7 +103,7 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 		return response;
 	}
 	
-	public byte[] accountBalance(UUID uniqueId) throws RemoteException, IOException{ 
+	public byte[] accountBalance(UUID uniqueId, Integer accountNumber) throws RemoteException, IOException{ 
 		List<String> parameters = new ArrayList<>();
 		parameters.add(uniqueId.toString());
 		Requestor requestor = new Requestor();
@@ -124,7 +124,7 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 		return response;
 	}
 	
-	public byte[] payment (UUID uniqueId, String billNumber) throws RemoteException, IOException{ //retorna mensagem de confirmação ou erro
+	public byte[] payment (UUID uniqueId, Integer accountNumber, String billNumber, Double value) throws RemoteException, IOException{ //retorna mensagem de confirmação ou erro
 		List<String> parameters = new ArrayList<>();
 		parameters.add(uniqueId.toString());
 		parameters.add(billNumber);
@@ -146,7 +146,7 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 		return response;
 	}
 	
-	public byte[] creditCardBill(UUID uniqueId) throws RemoteException, IOException{ //retorna total da fatura até a consulta
+	public byte[] creditCardBill(UUID uniqueId, Integer accountNumber, Double value) throws RemoteException, IOException{ //retorna total da fatura até a consulta
 		List<String> parameters = new ArrayList<>();
 		parameters.add(uniqueId.toString());
 		Requestor requestor = new Requestor();
