@@ -35,29 +35,28 @@ public class ClientRequestHandler {
 	 * TCP
 	 */
 	Socket receiveSocket;
-	private ObjectOutputStream chosenFile;
-	private InputStream fileIn;
+	private ObjectOutputStream operationRequested;
+	private InputStream infos;
 	private StringBuilder stringBuilder;
 
 	public byte[] receive() throws IOException, InterruptedException {
 		byte[] msg = null;
 		data = new byte[BUF_SIZE];
 		stringBuilder = new StringBuilder();
-		fileIn = receiveSocket.getInputStream();
-		while ((fileIn.read(data)) > 0) {
+		infos = receiveSocket.getInputStream();
+		while ((infos.read(data)) > 0) {
 			stringBuilder.append(new String(data, 0, data.length));
 		}
 		msg = stringBuilder.toString().getBytes();
-		fileIn.close();
-		chosenFile.close();
+		infos.close();
 		receiveSocket.close();
 		return msg;
 	}
 
-	public void send(byte[] nomeArquivo) throws UnknownHostException, IOException, NotBoundException {
+	public void send(byte[] nomeOperacao) throws UnknownHostException, IOException, NotBoundException {
 		receiveSocket = new Socket(host, port);
-		chosenFile = new ObjectOutputStream(receiveSocket.getOutputStream());
-		chosenFile.writeObject(nomeArquivo);
+		operationRequested = new ObjectOutputStream(receiveSocket.getOutputStream());
+		operationRequested.writeObject(nomeOperacao);
 	}
 
 }
