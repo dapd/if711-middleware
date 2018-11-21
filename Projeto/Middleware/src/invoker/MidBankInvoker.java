@@ -61,6 +61,16 @@ public class MidBankInvoker {
 								new MessageBody(null, null,
 										new ReplyHeader(Operation.ACCOUNT_CREATION.getValor(), requestId, 0),
 										new ReplyBody(msgASerSerializada)));
+					} else if (Operation.DELETE_ACCOUNT.getValor().equals(operation)) {
+						UUID id = UUID.fromString(msgNaoSerial.getBody().getRequestBody().getParameters().get(0));
+						Integer accountNumber = Integer
+								.valueOf(msgNaoSerial.getBody().getRequestBody().getParameters().get(1));
+						msgASerSerializada = midBankImpl.deleteAccount(id, accountNumber);
+						sendMessage = new Message(
+								new MessageHeader("ftp", 0, Boolean.FALSE, 0, msgASerSerializada.length),
+								new MessageBody(null, null,
+										new ReplyHeader(Operation.DELETE_ACCOUNT.getValor(), requestId, 0),
+										new ReplyBody(msgASerSerializada)));
 					} else if (Operation.LOGIN.getValor()
 							.equals(msgNaoSerial.getBody().getRequestHeader().getOperation())) {
 						UUID id = UUID.fromString(msgNaoSerial.getBody().getRequestBody().getParameters().get(0));

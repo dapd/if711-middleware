@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public interface IMidBank extends Remote {
 	byte[] createAccout(UUID uniqueId, String pswd, int accountNumber, int bankBranchNumber) throws RemoteException, IOException;
+	byte[] deleteAccount(UUID uniqueId, int accountNumber) throws RemoteException, IOException;
 	byte[] login(UUID uniqueId, String pswd) throws RemoteException, IOException;
 	byte[] moneyTransfer(UUID uniqueId, Integer debitAccountNumber, Integer debitBankBranchNumber, Integer creditAccountNumber, Integer creditBankBranchNumber, String bankName, Double amountToTransfer) throws RemoteException, IOException;
 	byte[] accountBalance(UUID uniqueId, Integer accountNumber) throws RemoteException, IOException;

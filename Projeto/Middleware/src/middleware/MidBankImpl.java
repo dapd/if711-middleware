@@ -36,9 +36,22 @@ public class MidBankImpl extends UnicastRemoteObject implements IMidBank {
 				UUID.randomUUID().toString());
 		if (!accounts.containsValue(newAccount)) {
 			accounts.put(accountNumber, newAccount);
-			saldos.put(accountNumber, 0.0);
+			saldos.put(accountNumber, 100.0);
 			historic.add(new Transaction(UUID.randomUUID().toString(), Operation.ACCOUNT_CREATION.getValor(), null,
 					new Date().toString()));
+			ret = Messages.SCS.getValor();
+		} else {
+			ret = Messages.INVALID_ACCOUNT.getValor();
+		}
+		return ret.getBytes();
+	}
+	
+	@Override
+	public byte[] deleteAccount(UUID uniqueId, int accountNumber) throws RemoteException, IOException {
+		String ret;
+		if (accounts.containsKey(accountNumber)) {
+			accounts.remove(accountNumber);
+			saldos.remove(accountNumber);
 			ret = Messages.SCS.getValor();
 		} else {
 			ret = Messages.INVALID_ACCOUNT.getValor();

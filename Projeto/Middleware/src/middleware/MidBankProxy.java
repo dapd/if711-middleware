@@ -31,7 +31,7 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 	
 	private static final long serialVersionUID = 5963528753775146077L;
 
-	/*abertura de conta, login, transferencia, consulta de saldo, pagamento de boleto, ver fatura*/
+	/*abertura de conta, encerramento de conta, login, transferencia, consulta de saldo, pagamento de boleto, ver fatura*/
 	public byte[] createAccout(UUID uniqueId, String pswd, int accountNumber, int bankBranchNumber) throws RemoteException, IOException{ //retorna mensagem de confirmação
 		List<String> parameters = new ArrayList<>();
 		parameters.add(uniqueId.toString());
@@ -40,7 +40,29 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 		parameters.add(String.valueOf(bankBranchNumber));
 		Requestor requestor = new Requestor();
 		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
-		invok.setOperationName("createAccount");
+		invok.setOperationName(Operation.ACCOUNT_CREATION.getValor());
+		invok.setParameters(parameters);
+		
+		byte[] response = null;
+		try {
+			response = requestor.invoke(invok);
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return response;
+	}
+	
+	public byte[] deleteAccount(UUID uniqueId, int accountNumber) throws RemoteException, IOException{
+		List<String> parameters = new ArrayList<>();
+		parameters.add(uniqueId.toString());
+		parameters.add(String.valueOf(accountNumber));
+		Requestor requestor = new Requestor();
+		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
+		invok.setOperationName(Operation.DELETE_ACCOUNT.getValor());
 		invok.setParameters(parameters);
 		
 		byte[] response = null;
@@ -62,7 +84,7 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 		parameters.add(pswd);
 		Requestor requestor = new Requestor();
 		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
-		invok.setOperationName("login");
+		invok.setOperationName(Operation.LOGIN.getValor());
 		invok.setParameters(parameters);
 		
 		byte[] response = null;
@@ -81,13 +103,15 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 	public byte[] moneyTransfer(UUID uniqueId, Integer debitAccountNumber, Integer debitBankBranchNumber, Integer creditAccountNumber, Integer creditBankBranchNumber, String bankName, Double amountToTransfer) throws RemoteException, IOException{ //retorna mensagem de confirmação ou erro
 		List<String> parameters = new ArrayList<>();
 		parameters.add(uniqueId.toString());
+		parameters.add(debitAccountNumber.toString());
+		parameters.add(debitBankBranchNumber.toString());
 		parameters.add(String.valueOf(creditAccountNumber));
 		parameters.add(String.valueOf(creditBankBranchNumber));
 		parameters.add(String.valueOf(bankName));
-		parameters.add(String.valueOf(String.valueOf(amountToTransfer)));
+		parameters.add(String.valueOf(amountToTransfer));
 		Requestor requestor = new Requestor();
 		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
-		invok.setOperationName("moneyTransfer");
+		invok.setOperationName(Operation.TRANSFER.getValor());
 		invok.setParameters(parameters);
 		
 		byte[] response = null;
@@ -106,9 +130,10 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 	public byte[] accountBalance(UUID uniqueId, Integer accountNumber) throws RemoteException, IOException{ 
 		List<String> parameters = new ArrayList<>();
 		parameters.add(uniqueId.toString());
+		parameters.add(accountNumber.toString());
 		Requestor requestor = new Requestor();
 		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
-		invok.setOperationName("accountBalance");
+		invok.setOperationName(Operation.BALANCE.getValor());
 		invok.setParameters(parameters);
 		
 		byte[] response = null;
@@ -127,10 +152,12 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 	public byte[] payment (UUID uniqueId, Integer accountNumber, String billNumber, Double value) throws RemoteException, IOException{ //retorna mensagem de confirmação ou erro
 		List<String> parameters = new ArrayList<>();
 		parameters.add(uniqueId.toString());
+		parameters.add(accountNumber.toString());
 		parameters.add(billNumber);
+		parameters.add(value.toString());
 		Requestor requestor = new Requestor();
 		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
-		invok.setOperationName("payment");
+		invok.setOperationName(Operation.PAYMENT.getValor());
 		invok.setParameters(parameters);
 		
 		byte[] response = null;
@@ -149,9 +176,11 @@ public class MidBankProxy extends ClientProxy implements IMidBank{
 	public byte[] creditCardBill(UUID uniqueId, Integer accountNumber, Double value) throws RemoteException, IOException{ //retorna total da fatura até a consulta
 		List<String> parameters = new ArrayList<>();
 		parameters.add(uniqueId.toString());
+		parameters.add(accountNumber.toString());
+		parameters.add(value.toString());
 		Requestor requestor = new Requestor();
 		Invocation invok = new Invocation(this.getHost(), this.getPort(), this.getObjectId());
-		invok.setOperationName("creditCardBill");
+		invok.setOperationName(Operation.CARD_BILL_PAYMENT.getValor());
 		invok.setParameters(parameters);
 		
 		byte[] response = null;
