@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import crypt.EncriptaDecriptaDES;
+
 /**
  * @author fabio
  *
@@ -36,12 +38,12 @@ public class ServerRequestHandler {
 		// Recebendo informacoes do arquivo solicitado
 		ObjectInputStream chosenFile = new ObjectInputStream(sendSocket.getInputStream());
 		nomeArquivo = (byte[]) chosenFile.readObject();
-		return nomeArquivo;
+		return EncriptaDecriptaDES.decripta(nomeArquivo);
 	}
 
 	public void send(byte[] msg) throws IOException {
 		OutputStream out = sendSocket.getOutputStream();
-		out.write(msg, 0, msg.length);
+		out.write(EncriptaDecriptaDES.encripta(msg), 0, msg.length);
 		out.close();
 		sendSocket.close();
 		serverSocketTcp.close();

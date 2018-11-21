@@ -10,6 +10,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 
+import crypt.EncriptaDecriptaDES;
+
 /**
  * @author fabio
  *
@@ -50,13 +52,13 @@ public class ClientRequestHandler {
 		msg = stringBuilder.toString().getBytes();
 		infos.close();
 		receiveSocket.close();
-		return msg;
+		return EncriptaDecriptaDES.decripta(msg);
 	}
 
-	public void send(byte[] nomeOperacao) throws UnknownHostException, IOException, NotBoundException {
+	public void send(byte[] serialMessage) throws UnknownHostException, IOException, NotBoundException {
 		receiveSocket = new Socket(host, port);
 		operationRequested = new ObjectOutputStream(receiveSocket.getOutputStream());
-		operationRequested.writeObject(nomeOperacao);
+		operationRequested.writeObject(EncriptaDecriptaDES.encripta( serialMessage ) );
 	}
 
 }
