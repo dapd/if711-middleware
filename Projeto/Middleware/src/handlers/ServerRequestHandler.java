@@ -5,9 +5,11 @@ package handlers;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.OutputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import crypt.EncriptaDecriptaAES;
 
 /**
  * @author fabio
@@ -29,19 +31,31 @@ public class ServerRequestHandler {
 	private Socket sendSocket;
 
 	public byte[] receive() throws IOException, ClassNotFoundException {
-		byte[] nomeArquivo = null;
+		byte[] request = null;
 		// Inicializando servidor
 		serverSocketTcp = new ServerSocket(port);
 		sendSocket = serverSocketTcp.accept();
 		// Recebendo informacoes do arquivo solicitado
 		ObjectInputStream chosenFile = new ObjectInputStream(sendSocket.getInputStream());
-		nomeArquivo = (byte[]) chosenFile.readObject();
-		return nomeArquivo;
+		request = (byte[]) chosenFile.readObject();
+		byte[] msg = null;
+		try {
+			msg = EncriptaDecriptaAES.decrypt(request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return msg;
 	}
 
 	public void send(byte[] msg) throws IOException {
-		OutputStream out = sendSocket.getOutputStream();
-		out.write(msg, 0, msg.length);
+		ObjectOutputStream out = new ObjectOutputStream(sendSocket.getOutputStream());
+		byte[] encryptMsg = null;
+		try {
+			encryptMsg = EncriptaDecriptaAES.encrypt(msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		out.writeObject(encryptMsg);
 		out.close();
 		sendSocket.close();
 		serverSocketTcp.close();

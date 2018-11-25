@@ -3,23 +3,26 @@
  */
 package handlers;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 
+import crypt.EncriptaDecriptaAES;
+
 /**
  * @author fabio
+ * @author diogo
+ * @author marina
  *
  */
 public class ClientRequestHandler {
-	private static final int BUF_SIZE = 1024;
-	private static final String END = String.valueOf('\0');
 	private String host;
 	private Integer port;
-	private byte[] data;
 
 	/**
 	 * @param host
@@ -36,27 +39,44 @@ public class ClientRequestHandler {
 	 */
 	Socket receiveSocket;
 	private ObjectOutputStream operationRequested;
-	private InputStream infos;
-	private StringBuilder stringBuilder;
+	private ObjectInputStream infos;
+	Long ini, fim, acc = 0l;
 
-	public byte[] receive() throws IOException, InterruptedException {
-		byte[] msg = null;
-		data = new byte[BUF_SIZE];
-		stringBuilder = new StringBuilder();
-		infos = receiveSocket.getInputStream();
-		while ((infos.read(data)) > 0) {
-			stringBuilder.append(new String(data, 0, data.length));
+	public byte[] receive() throws IOException, InterruptedException{
+		byte[] msg = null, bytes = null;
+		BufferedWriter writer = new BufferedWriter(new FileWriter("tempos.txt", true));
+		infos = new ObjectInputStream(receiveSocket.getInputStream());
+		try {
+			bytes = (byte[]) infos.readObject();
+			acc = 0l;
+			ini = System.nanoTime();
+			msg = EncriptaDecriptaAES.decrypt(bytes);
+			fim = System.nanoTime();
+			acc += fim - ini;
+			writer.write(acc.toString());
+			writer.newLine();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		msg = stringBuilder.toString().getBytes();
+		writer.close();
 		infos.close();
 		receiveSocket.close();
 		return msg;
 	}
 
-	public void send(byte[] nomeOperacao) throws UnknownHostException, IOException, NotBoundException {
+	public void send(byte[] serialMessage) throws UnknownHostException, IOException, NotBoundException {
 		receiveSocket = new Socket(host, port);
 		operationRequested = new ObjectOutputStream(receiveSocket.getOutputStream());
-		operationRequested.writeObject(nomeOperacao);
+		byte[] encryptMessage = null;
+		try {
+			ini = System.nanoTime();
+			encryptMessage = EncriptaDecriptaAES.encrypt( serialMessage );
+			fim = System.nanoTime();
+			acc += fim - ini;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		operationRequested.writeObject( encryptMessage );
 	}
 
 }

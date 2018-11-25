@@ -1,0 +1,50 @@
+syntax = "proto2";
+
+package message;
+
+message OperationReturn{
+    required string msg = 1;
+    required int32 code = 2;
+}
+
+message ReplyHeader{
+    required string serviceContext = 1;
+    required int32 requestId = 2;
+    required int32 replyStatus = 3;
+}
+
+message ReplyBody{
+    required OperationReturn opReturn = 1;
+}
+
+message RequestHeader{
+    required string context = 1;
+    required int32 requestId = 2;
+    required bool responseExpected = 3;
+    required int32 objectKey = 4;
+    required string operation = 5;
+}
+
+message RequestBody{
+    repeated string parameters = 1;
+}
+
+message MessageHeader{
+    required string magic = 1;
+    required int32 version = 2;
+    required bool byteOrder = 3;
+    required int32 messageType = 4;
+    required int64 messageSize = 5;
+}
+
+message MessageBody{
+    required RequestHeader requestHeader = 1;
+    required RequestBody requestBody = 2;
+    required ReplyHeader replyHeader = 3;
+    required ReplyBody replyBody = 4;
+}
+
+message Message{
+    required MessageHeader header = 1;
+    required MessageBody body = 2;
+}
