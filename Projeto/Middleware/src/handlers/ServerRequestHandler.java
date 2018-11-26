@@ -33,12 +33,12 @@ public class ServerRequestHandler {
 	public byte[] receive() throws IOException, ClassNotFoundException {
 		byte[] request = null;
 		byte[] msg = null;
+		// Inicializando servidor
+		serverSocketTcp = new ServerSocket(port);
+		sendSocket = serverSocketTcp.accept();
+		ObjectInputStream chosenFile = new ObjectInputStream(sendSocket.getInputStream());
 		try {
-			// Inicializando servidor
-			serverSocketTcp = new ServerSocket(port);
-			sendSocket = serverSocketTcp.accept();
 			// Recebendo informacoes do arquivo solicitado
-			ObjectInputStream chosenFile = new ObjectInputStream(sendSocket.getInputStream());
 			request = (byte[]) chosenFile.readObject();
 			msg = EncriptaDecriptaAES.decrypt(request);
 		} catch (Exception e) {
@@ -48,16 +48,14 @@ public class ServerRequestHandler {
 	}
 
 	public void send(byte[] msg) throws IOException {
-		byte[] encryptMsg = null;
+		ObjectOutputStream out = new ObjectOutputStream(sendSocket.getOutputStream());
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(sendSocket.getOutputStream());
-			encryptMsg = EncriptaDecriptaAES.encrypt(msg);
-			out.writeObject(encryptMsg);
+			out.writeObject(EncriptaDecriptaAES.encrypt(msg));
 			out.close();
-			sendSocket.close();
-			serverSocketTcp.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		sendSocket.close();
+		serverSocketTcp.close();
 	}
 }

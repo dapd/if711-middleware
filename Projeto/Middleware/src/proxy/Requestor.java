@@ -16,7 +16,7 @@ public class Requestor {
 	private static final long TIMEOUT = 30000l;
 	private static final Random RANDOM = new Random(System.currentTimeMillis());
 
-	public byte[] invoke(Invocation invok) throws UnknownHostException, NotBoundException, InterruptedException {
+	public byte[] invoke(Invocation invok) throws UnknownHostException {
 		ClientRequestHandler crh = new ClientRequestHandler(invok.getHost(), invok.getPort());
 		Marshaller marshaller = new Marshaller();
 		Boolean communicationSuccess = Boolean.TRUE;
@@ -37,13 +37,13 @@ public class Requestor {
 				crh.send(serialMessage);
 				bs = crh.receive();
 				communicationSuccess = Boolean.TRUE;
-				if (!communicationSuccess && finalTime - inicialTime > TIMEOUT) {
-					break;
-				}
-			} catch (IOException e) {
+			} catch (IOException | InterruptedException | NotBoundException e) {
 				e.printStackTrace();
 				communicationSuccess = Boolean.FALSE;
 				finalTime = System.currentTimeMillis();
+				if (!communicationSuccess && finalTime - inicialTime > TIMEOUT) {
+					break;
+				}
 			}
 		} while (!communicationSuccess);
 
