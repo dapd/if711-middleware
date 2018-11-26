@@ -44,9 +44,9 @@ public class ClientRequestHandler {
 
 	public byte[] receive() throws IOException, InterruptedException{
 		byte[] msg = null, bytes = null;
-		BufferedWriter writer = new BufferedWriter(new FileWriter("tempos.txt", true));
-		infos = new ObjectInputStream(receiveSocket.getInputStream());
 		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter("tempos.txt", true));
+			infos = new ObjectInputStream(receiveSocket.getInputStream());
 			bytes = (byte[]) infos.readObject();
 			acc = 0l;
 			ini = System.nanoTime();
@@ -55,28 +55,28 @@ public class ClientRequestHandler {
 			acc += fim - ini;
 			writer.write(acc.toString());
 			writer.newLine();
+			writer.close();
+			infos.close();
+			receiveSocket.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		writer.close();
-		infos.close();
-		receiveSocket.close();
 		return msg;
 	}
 
 	public void send(byte[] serialMessage) throws UnknownHostException, IOException, NotBoundException {
-		receiveSocket = new Socket(host, port);
-		operationRequested = new ObjectOutputStream(receiveSocket.getOutputStream());
 		byte[] encryptMessage = null;
 		try {
+			receiveSocket = new Socket(host, port);
+			operationRequested = new ObjectOutputStream(receiveSocket.getOutputStream());
 			ini = System.nanoTime();
 			encryptMessage = EncriptaDecriptaAES.encrypt( serialMessage );
 			fim = System.nanoTime();
 			acc += fim - ini;
+			operationRequested.writeObject( encryptMessage );
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		operationRequested.writeObject( encryptMessage );
 	}
 
 }

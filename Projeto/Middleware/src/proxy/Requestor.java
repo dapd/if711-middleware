@@ -31,21 +31,21 @@ public class Requestor {
 		Long finalTime = 0l;
 		byte[] bs = null;
 
-		try {
-			byte[] serialMessage = marshaller.marshall(request);
-			do {
+		do {
+			try {
+				byte[] serialMessage = marshaller.marshall(request);
 				crh.send(serialMessage);
 				bs = crh.receive();
 				communicationSuccess = Boolean.TRUE;
 				if (!communicationSuccess && finalTime - inicialTime > TIMEOUT) {
 					break;
 				}
-			} while (!communicationSuccess);
-		} catch (IOException e) {
-			e.printStackTrace();
-			communicationSuccess = Boolean.FALSE;
-			finalTime = System.currentTimeMillis();
-		}
+			} catch (IOException e) {
+				e.printStackTrace();
+				communicationSuccess = Boolean.FALSE;
+				finalTime = System.currentTimeMillis();
+			}
+		} while (!communicationSuccess);
 
 		return bs;
 	}
