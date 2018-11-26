@@ -75,6 +75,7 @@ public class ClientRequestHandler {
 			acc += fim - ini;
 			operationRequested.writeObject( encryptMessage );
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

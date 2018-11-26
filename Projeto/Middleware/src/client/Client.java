@@ -23,8 +23,8 @@ import proxy.Marshaller;
  */
 public class Client {
 
-	private static final int offset = 1000;
-	private static final int it = offset + 10000;
+	private static final int offset = 0;
+	private static final int it = offset + 1000;
 	private static Marshaller marshaller = new Marshaller();
 
 	/**
